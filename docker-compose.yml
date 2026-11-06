@@ -1,0 +1,43 @@
+# Local development stack: PostgreSQL 16 (+ optional API container).
+#   docker compose up -d db          -> database only (run the API with `npm run dev:api`)
+#   docker compose --profile api up  -> database + API container
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: qualimix
+      POSTGRES_USER: qualimix_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-owner}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:-change-me-app}
+    ports:
+      - '127.0.0.1:5432:5432' # bound to localhost only
+    volumes:
+      - qualimix-pg:/var/lib/postgresql/data
+      - ./docker/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U qualimix_owner -d qualimix']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    profiles: ['api']
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgres://qualimix_app:${APP_DB_PASSWORD:-change-me-app}@db:5432/qualimix
+      DATABASE_MIGRATION_URL: postgres://qualimix_owner:${POSTGRES_PASSWORD:-change-me-owner}@db:5432/qualimix
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:-}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:-}
+      CRM_API_URL: ${CRM_API_URL:-}
+      CRM_API_TOKEN: ${CRM_API_TOKEN:-}
+    ports:
+      - '127.0.0.1:3001:3001'
+
+volumes:
+  qualimix-pg:

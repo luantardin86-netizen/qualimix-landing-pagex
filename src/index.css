@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+
+/* Qualimix identity — colors and fonts taken from the reference site. */
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+
+  --color-background: oklch(97.5% 0.002 260);
+  --color-foreground: oklch(17% 0.005 260);
+  --color-card: oklch(100% 0 0);
+  --color-primary: oklch(55% 0.215 27);
+  --color-primary-dark: oklch(45% 0.19 25);
+  --color-primary-foreground: oklch(99% 0 0);
+  --color-secondary: oklch(17% 0.005 260);
+  --color-muted: oklch(94% 0.003 260);
+  --color-muted-foreground: oklch(46% 0.01 260);
+  --color-accent: oklch(95% 0.025 25);
+  --color-border: oklch(90% 0.004 260);
+  --color-destructive: oklch(52% 0.22 27);
+  --color-success: oklch(52% 0.13 150);
+  --color-whatsapp: #25d366;
+
+  --container-content: 72rem;
+  --spacing-18: 4.5rem;
+
+  --animate-float-in: float-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility bg-concrete {
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(circle at 20% 10%, oklch(100% 0 0 / 0.9), transparent 45%),
+    radial-gradient(circle at 80% 90%, oklch(90% 0.003 260 / 0.6), transparent 50%);
+}
+
+@utility bg-red-gradient {
+  background-image: linear-gradient(135deg, oklch(60% 0.22 27), oklch(45% 0.19 25));
+}
+
+@utility field {
+  @apply block w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-foreground shadow-sm transition outline-none placeholder:text-muted-foreground/70 focus:border-primary focus:ring-4 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/15;
+}
