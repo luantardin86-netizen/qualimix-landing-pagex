@@ -1,6 +1,5 @@
 -- Qualimix leads: initial schema.
--- Plain PostgreSQL (13+). Applied automatically by Netlify Database on deploy,
--- or by `npm run db:migrate` against any other PostgreSQL server.
+-- Plain PostgreSQL (13+). Apply with `npm run db:migrate` against the configured database.
 -- NEVER edit this file after it has been applied; add a new migration instead.
 
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$

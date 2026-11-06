@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-server/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local database data
+.pglite-data/
+*.sqlite
+*.sqlite3
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+.DS_Store

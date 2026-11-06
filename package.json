@@ -18,8 +18,6 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.15",
     "@electric-sql/pglite-socket": "^0.2.18",
-    "@netlify/database": "^2.0.2",
-    "@netlify/functions": "^6.1.0",
     "@tailwindcss/vite": "^4.3.4",
     "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",

@@ -3,15 +3,14 @@
  *
  * Reads plain `.sql` files (or `<dir>/migration.sql`) from MIGRATIONS_DIR in
  * lexicographic order and records applied ones in `schema_migrations`.
- * On Netlify the platform applies the same files itself — do not run this
- * against a Netlify-managed database.
+ * Migrations are stored in the repository under database/migrations.
  */
 import { createHash } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import type { DbPool } from './pool'
 
-export const DEFAULT_MIGRATIONS_DIR = resolve(process.cwd(), 'netlify/database/migrations')
+export const DEFAULT_MIGRATIONS_DIR = resolve(process.cwd(), 'database/migrations')
 
 export interface Migration {
   name: string

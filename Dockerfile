@@ -14,7 +14,7 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist-server ./dist-server
-COPY netlify/database/migrations ./netlify/database/migrations
+COPY database/migrations ./database/migrations
 USER node
 EXPOSE 3001
 # Apply pending migrations with the owner role, then start the API with the app role.

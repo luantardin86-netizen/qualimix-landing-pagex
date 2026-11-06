@@ -31,7 +31,7 @@ CRM EXTERNO  (ainda não configurado → leads ficam "pending_sync")
 | Acesso a dados | `pg` com consultas parametrizadas |
 | Testes | Vitest + PGlite (motor PostgreSQL real em WASM, sem Docker) |
 
-Nenhuma dependência da Netlify é necessária para o backend. A pasta `netlify/` contém apenas um **adaptador opcional** (veja §10).
+O projeto é independente de provedores de hospedagem. O frontend é estático e o backend é um serviço Node.js separado, conectado ao PostgreSQL.
 
 ## 2. Estrutura de pastas
 
@@ -60,9 +60,8 @@ Nenhuma dependência da Netlify é necessária para o backend. A pasta `netlify/
 │   │   └── db/                 # pool e executor de migrations
 │   ├── scripts/                # migrate, crm-sync (cron), dev-pglite
 │   └── test/                   # testes de integração
-├── netlify/
-│   ├── database/migrations/    # migrations SQL (fonte única do schema)
-│   └── functions/              # adaptador OPCIONAL p/ hospedar a API na Netlify
+├── database/
+│   └── migrations/             # migrations SQL (fonte única do schema)
 ├── docker/postgres/            # init: cria papel de aplicação com privilégio mínimo
 ├── docker-compose.yml
 ├── Dockerfile                  # imagem da API
@@ -187,7 +186,7 @@ As respostas nunca devolvem os dados pessoais enviados.
 
 ## 6. Banco de dados
 
-Migration: [`netlify/database/migrations/0001_create-leads-and-crm-outbox.sql`](netlify/database/migrations/0001_create-leads-and-crm-outbox.sql). Para alterar o schema, **crie uma nova migration** (nunca edite uma já aplicada; o executor recusa arquivos alterados via checksum).
+Migration: [`database/migrations/0001_create-leads-and-crm-outbox.sql`](database/migrations/0001_create-leads-and-crm-outbox.sql). Para alterar o schema, **crie uma nova migration** (nunca edite uma já aplicada; o executor recusa arquivos alterados via checksum).
 
 ### `leads`
 
@@ -273,7 +272,7 @@ received ─► pending_sync ──2xx──► synced
 - **Frontend**: qualquer host estático (`npm run build` → `dist/`), inclusive Lovable. Se a API estiver em outro domínio, defina `VITE_API_BASE_URL` e inclua o domínio do site em `ALLOWED_ORIGINS` da API.
 - **Lovable sem backend publicado**: a página abre normalmente, mas o formulário **não consegue registrar cadastros** — exibe erro, mantém os dados digitados e oferece o WhatsApp. Configure `VITE_API_BASE_URL` com a API publicada para que os envios funcionem.
 - **Backend**: qualquer ambiente Node 20+ ou contêiner (`Dockerfile`) com PostgreSQL 13+ (Docker, RDS, Cloud SQL, Neon, Supabase…).
-- **Netlify (opcional)**: `netlify/functions/api.mts` expõe o mesmo app Hono em `/api/*` usando o Netlify Database (PostgreSQL gerenciado), que aplica automaticamente as migrations de `netlify/database/migrations/`; `crm-sync.mts` agenda a sincronização a cada 10 min. Para hospedar em outro lugar, basta ignorar/remover a pasta `netlify/functions` e o `netlify.toml`.
+- **Hospedagem independente**: o frontend é publicado como arquivos estáticos (`dist/`) e o backend é executado separadamente em Node.js 20+ com PostgreSQL. A API pode compartilhar o mesmo domínio por meio de proxy reverso ou usar um domínio próprio configurado em `VITE_API_BASE_URL` e `ALLOWED_ORIGINS`.
 
 ## 11. Testes
 
